@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Градусы → Радианы</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 340px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            margin-bottom: 15px;
+        }
+
+        button {
+            margin: 6px 0;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #e0e0e0;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #d0d0d0;
+        }
+
+        .correct {
+            background: #a5d6a7 !important;
+        }
+
+        .wrong {
+            background: #ef9a9a !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Переведи в радианы</h2>
+    <h3 id="angle"></h3>
+
+    <div id="answers"></div>
+
+    <button onclick="newTask()">Новый угол</button>
+</div>
+
+<script>
+const angles = [
+    12, 15, 18,
+    24, 30, 36,
+    45, 48, 54,
+    60, 72, 75,
+    90, 105, 108,
+    120, 135, 150,
+    165, 180, 270, 360
+];
+
+function toRadians(angle) {
+    const num = angle;
+    const den = 180;
+
+    let a = num;
+    let b = den;
+
+    // НОД
+    while (b !== 0) {
+        let t = b;
+        b = a % b;
+        a = t;
+    }
+
+    const numerator = num / a;
+    const denominator = den / a;
+
+    if (denominator === 1) return numerator + "π";
+    if (numerator === 1) return "π/" + denominator;
+
+    return numerator + "π/" + denominator;
+}
+
+function newTask() {
+    document.getElementById("answers").innerHTML = "";
+
+    const angle = angles[Math.floor(Math.random() * angles.length)];
+    document.getElementById("angle").innerText = angle + "°";
+
+    const correct = toRadians(angle);
+
+    let options = new Set();
+    options.add(correct);
+
+    while (options.size < 4) {
+        const fake = angles[Math.floor(Math.random() * angles.length)];
+        options.add(toRadians(fake));
+    }
+
+    [...options].sort(() => Math.random() - 0.5).forEach(ans => {
+        const btn = document.createElement("button");
+        btn.innerText = ans;
+        btn.onclick = () => {
+            if (ans === correct) {
+                btn.classList.add("correct");
+            } else {
+                btn.classList.add("wrong");
+            }
+        };
+        document.getElementById("answers").appendChild(btn);
+    });
+}
+
+newTask();
+</script>
+
+</body>
+</html>
